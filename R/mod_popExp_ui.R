@@ -117,6 +117,36 @@ mod_popExp_ui <- function(id, label = "Population Explorer") {
           id = "pop_cic_plot",
           wellPanel(
             plotOutput(ns("plot_output"), height = 700),
+            uiOutput(outputId = ns("downloadControls")),
+            fluidRow(
+              column(
+                width = 4,
+                selectizeInput(
+                  inputId = ns("file_ext"), 
+                  "File extension (dpi = 300)",
+                  choices = c("jpg", "pdf", "tiff", "svg", "pptx"), 
+                  multiple = F,
+                  selected = "pptx"
+                )
+              ),
+              column(
+                width = 4,
+                sliderInput(
+                  inputId = ns("fig_width"), 
+                  label = "Width (in):",
+                  min = 5, max = 15, value = 8
+                )
+              ),
+              column(
+                width = 4,
+                sliderInput(
+                  inputId = ns("fig_height"), 
+                  label = "Height (in):",
+                  min = 5, max = 15, value = 6
+                )
+              )
+            ),
+            downloadButton(outputId = ns("downloadButton"), label = "Download the plot"),
             div(style = "color: #0275d8; font-size: 12px;", htmlOutput(ns("applied_filters"))),
             br(), br(),
             DT::dataTableOutput(ns("plot_data"))

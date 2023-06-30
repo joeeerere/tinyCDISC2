@@ -7,10 +7,13 @@
 #'
 #' @import shiny
 #' @import dplyr
+#' @importFrom rvg dm
+#' @importFrom officer read_pptx add_slide ph_with
 #' @importFrom IDEAFilter shiny_data_filter
 #' @importFrom haven zap_label zap_formats
 #' @importFrom purrr map walk2
 #' @importFrom plotly renderPlotly ggplotly layout
+#' @importFrom ggplot2 ggsave
 #'
 #' @family popExp Functions
 #' @noRd
@@ -360,4 +363,75 @@ mod_popExp_server <- function(input, output, session, datafile) {
       p_data()
     }
   })
+  
+  output$downloadButton <- downloadHandler(
+    filename = function() {
+      # paste(input$vars, "_by_", input$strata, "_ggpairs.", input$file_ext, sep = "")
+      paste0("Plot.", input$file_ext)
+    },
+    # content is a function with argument file. content writes the plot to the device
+    content = function(file) {
+      withProgress(
+        message = "Download in progress",
+        detail = "This may take a while...",
+        value = 0,
+        {
+          for (i in 1:15) {
+            incProgress(1 / 15)
+            Sys.sleep(0.01)
+          }
+          
+          plotobj <- switch(input$plot_type,
+                            `Scatter Plot` = p_scatter(), # %>%
+                            # plotly::ggplotly() %>%
+                            # plotly::layout(title = list(yref = "container", y = .95, yanchor = "bottom")),
+                            `Box Plot` = p_box(), # %>%
+                            # plotly::ggplotly(),
+                            `Spaghetti Plot` = p_spaghetti(), # %>%
+                            # plotly::ggplotly(),
+                            `Line plot - mean over time` = p_line$plot(), # %>%
+                            # plotly::ggplotly(tooltip = c("text")) %>%
+                            # plotly::layout(title = list(yref = "container", y = .95, yanchor = "bottom")),
+                            `Heatmap - endpoint correlations` = p_heatmap$plot() %>%
+                              plotly::ggplotly(tooltip = c("text")),
+                            `Kaplan-Meier Curve` = p_km() # %>% plotly::ggplotly()
+          ) %>%
+            config(
+              displaylogo = FALSE,
+              modeBarButtonsToRemove =
+                c(
+                  "zoom2d", "pan2d", "select2d", "lasso2d", "zoomIn2d", "zoomOut2d", "autoScale2d", "resetScale2d",
+                  "hoverClosestCartesian", "hoverCompareCartesian", "zoom3d", "pan3d",
+                  "resetCameraDefault3d", "resetCameraLastSave3d", "hoverClosest3d",
+                  "orbitRotation", "tableRotation", "zoomInGeo", "zoomOutGeo",
+                  "resetGeo", "hoverClosestGeo", "sendDataToCloud", "hoverClosestGl2d",
+                  "hoverClosestPie", "toggleHover", "resetViews", "toggleSpikelines", "resetViewMapbox"
+                  # , 'toImage', 'resetScale2d', 'zoomIn2d', 'zoomOut2d','zoom2d', 'pan2d'
+                )
+            )
+          
+          
+          print(plotobj)
+          
+          if (input$file_ext == "pptx") {
+            my_vec_graph <- rvg::dml(ggobj = plotobj)
+            doc <- officer::read_pptx()
+            doc <- officer::add_slide(doc, layout = "Title and Content", master = "Office Theme")
+            doc <- officer::ph_with(doc, my_vec_graph, location = officer::ph_location(width = input$fig_width, height = input$fig_height))
+            print(doc, target = file)
+          } else {
+            ggplot2::ggsave(
+              file, 
+              plotobj, 
+              dpi = 300, 
+              units = "in", 
+              width = input$fig_width, 
+              height = input$fig_height
+            )
+          }
+        }
+      )
+    }
+  )
+  
 }
