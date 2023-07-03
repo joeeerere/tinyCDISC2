@@ -278,32 +278,32 @@ mod_popExp_server <- function(input, output, session, datafile) {
   output$plot_output <- renderPlot({
     switch(input$plot_type,
       `Scatter Plot` = p_scatter(), # %>%
-        # plotly::ggplotly() %>%
-        # plotly::layout(title = list(yref = "container", y = .95, yanchor = "bottom")),
+      # plotly::ggplotly() %>%
+      # plotly::layout(title = list(yref = "container", y = .95, yanchor = "bottom")),
       `Box Plot` = p_box(), # %>%
-        # plotly::ggplotly(),
+      # plotly::ggplotly(),
       `Spaghetti Plot` = p_spaghetti(), # %>%
-        # plotly::ggplotly(),
+      # plotly::ggplotly(),
       `Line plot - mean over time` = p_line$plot(), # %>%
-        # plotly::ggplotly(tooltip = c("text")) %>%
-        # plotly::layout(title = list(yref = "container", y = .95, yanchor = "bottom")),
+      # plotly::ggplotly(tooltip = c("text")) %>%
+      # plotly::layout(title = list(yref = "container", y = .95, yanchor = "bottom")),
       `Heatmap - endpoint correlations` = p_heatmap$plot() %>%
         plotly::ggplotly(tooltip = c("text")),
       `Kaplan-Meier Curve` = p_km() # %>% plotly::ggplotly()
     ) %>%
-    config(
-      displaylogo = FALSE,
-      modeBarButtonsToRemove =
-        c(
-          "zoom2d", "pan2d", "select2d", "lasso2d", "zoomIn2d", "zoomOut2d", "autoScale2d", "resetScale2d",
-          "hoverClosestCartesian", "hoverCompareCartesian", "zoom3d", "pan3d",
-          "resetCameraDefault3d", "resetCameraLastSave3d", "hoverClosest3d",
-          "orbitRotation", "tableRotation", "zoomInGeo", "zoomOutGeo",
-          "resetGeo", "hoverClosestGeo", "sendDataToCloud", "hoverClosestGl2d",
-          "hoverClosestPie", "toggleHover", "resetViews", "toggleSpikelines", "resetViewMapbox"
-          # , 'toImage', 'resetScale2d', 'zoomIn2d', 'zoomOut2d','zoom2d', 'pan2d'
-        )
-    )
+      config(
+        displaylogo = FALSE,
+        modeBarButtonsToRemove =
+          c(
+            "zoom2d", "pan2d", "select2d", "lasso2d", "zoomIn2d", "zoomOut2d", "autoScale2d", "resetScale2d",
+            "hoverClosestCartesian", "hoverCompareCartesian", "zoom3d", "pan3d",
+            "resetCameraDefault3d", "resetCameraLastSave3d", "hoverClosest3d",
+            "orbitRotation", "tableRotation", "zoomInGeo", "zoomOutGeo",
+            "resetGeo", "hoverClosestGeo", "sendDataToCloud", "hoverClosestGl2d",
+            "hoverClosestPie", "toggleHover", "resetViews", "toggleSpikelines", "resetViewMapbox"
+            # , 'toImage', 'resetScale2d', 'zoomIn2d', 'zoomOut2d','zoom2d', 'pan2d'
+          )
+      )
   })
 
   # Output text string of what was filtered in IDEAFilter widget/ module
@@ -363,7 +363,7 @@ mod_popExp_server <- function(input, output, session, datafile) {
       p_data()
     }
   })
-  
+
   output$downloadButton <- downloadHandler(
     filename = function() {
       # paste(input$vars, "_by_", input$strata, "_ggpairs.", input$file_ext, sep = "")
@@ -380,21 +380,21 @@ mod_popExp_server <- function(input, output, session, datafile) {
             incProgress(1 / 15)
             Sys.sleep(0.01)
           }
-          
+
           plotobj <- switch(input$plot_type,
-                            `Scatter Plot` = p_scatter(), # %>%
-                            # plotly::ggplotly() %>%
-                            # plotly::layout(title = list(yref = "container", y = .95, yanchor = "bottom")),
-                            `Box Plot` = p_box(), # %>%
-                            # plotly::ggplotly(),
-                            `Spaghetti Plot` = p_spaghetti(), # %>%
-                            # plotly::ggplotly(),
-                            `Line plot - mean over time` = p_line$plot(), # %>%
-                            # plotly::ggplotly(tooltip = c("text")) %>%
-                            # plotly::layout(title = list(yref = "container", y = .95, yanchor = "bottom")),
-                            `Heatmap - endpoint correlations` = p_heatmap$plot() %>%
-                              plotly::ggplotly(tooltip = c("text")),
-                            `Kaplan-Meier Curve` = p_km() # %>% plotly::ggplotly()
+            `Scatter Plot` = p_scatter(), # %>%
+            # plotly::ggplotly() %>%
+            # plotly::layout(title = list(yref = "container", y = .95, yanchor = "bottom")),
+            `Box Plot` = p_box(), # %>%
+            # plotly::ggplotly(),
+            `Spaghetti Plot` = p_spaghetti(), # %>%
+            # plotly::ggplotly(),
+            `Line plot - mean over time` = p_line$plot(), # %>%
+            # plotly::ggplotly(tooltip = c("text")) %>%
+            # plotly::layout(title = list(yref = "container", y = .95, yanchor = "bottom")),
+            `Heatmap - endpoint correlations` = p_heatmap$plot() %>%
+              plotly::ggplotly(tooltip = c("text")),
+            `Kaplan-Meier Curve` = p_km() # %>% plotly::ggplotly()
           ) %>%
             config(
               displaylogo = FALSE,
@@ -409,10 +409,10 @@ mod_popExp_server <- function(input, output, session, datafile) {
                   # , 'toImage', 'resetScale2d', 'zoomIn2d', 'zoomOut2d','zoom2d', 'pan2d'
                 )
             )
-          
-          
+
+
           print(plotobj)
-          
+
           if (input$file_ext == "pptx") {
             my_vec_graph <- rvg::dml(ggobj = plotobj)
             doc <- officer::read_pptx()
@@ -421,11 +421,11 @@ mod_popExp_server <- function(input, output, session, datafile) {
             print(doc, target = file)
           } else {
             ggplot2::ggsave(
-              file, 
-              plotobj, 
-              dpi = 300, 
-              units = "in", 
-              width = input$fig_width, 
+              file,
+              plotobj,
+              dpi = 300,
+              units = "in",
+              width = input$fig_width,
               height = input$fig_height
             )
           }
@@ -433,5 +433,4 @@ mod_popExp_server <- function(input, output, session, datafile) {
       )
     }
   )
-  
 }
