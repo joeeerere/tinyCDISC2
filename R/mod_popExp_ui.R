@@ -18,18 +18,6 @@
 mod_popExp_ui <- function(id, label = "Population Explorer") {
   ns <- NS(id)
   tagList(
-    div( 
-      style = "display: inline-block; float:right;",
-      actionButton(
-        inputId = ns("help_sel"),
-        label = NULL,
-        icon = icon("question-circle"),
-        class = "btn-start",
-        style = "display: inline-block; float:right; margin-bottom:15px;"
-      )
-    ),
-    h1("Population Explorer", align = "center"),
-    br(), br(), br(),
     div(uiOutput(ns("study_pop_exp")), class = "studyid"),
     fluidRow(
       column(

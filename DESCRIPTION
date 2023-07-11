@@ -1,18 +1,8 @@
 Package: tidyCDISC
 Title: Quick Table Generation & Exploratory Analyses on ADaM-Ish Datasets
 Version: 0.2.2
-Authors@R: c(
-    person("Aaron", "Clark", , "clark.aaronchris@gmail.com", role = c("aut", "cre"),
-           comment = c(ORCID = "0000-0002-0123-0970")),
-    person("Jeff", "Thompson", , "jeff.thompson51317@gmail.com", role = "aut"),
-    person("Teresa", "Wilson", , "teresadwilson@gmail.com", role = "aut"),
-    person("Nate", "Mockler", , "nate.mockler@biogen.com", role = c("ccp", "led")),
-    person("Maya", "Gans", , "maya.gans@biogen.com", role = "aut"),
-    person("Robert", "Krajcik", , "robert.krajcik@biogen.com", role = "ctb"),
-    person("Marly", "Gotti", , "marly.cormar@biogen.com", role = "ctb"),
-    person("Biogen", "Inc", role = "cph"),
-    person('Jinhwan','Kim', , "jinhwan@zarathu.com", role = 'ctb')
-  )
+Authors@R: person("Aaron", "Clark", , "clark.aaronchris@gmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-0123-0970"))
 Description: Provides users a quick exploratory dive into common
     visualizations without writing a single line of code given the users
     data follows the Analysis Data Model (ADaM) standards put forth by the
@@ -56,7 +46,6 @@ Imports:
     purrr,
     rlang,  
     rmarkdown,
-    rvg,
     shiny,
     shinyjs,
     shinyWidgets,

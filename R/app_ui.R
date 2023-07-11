@@ -12,8 +12,8 @@ app_ui <- function(request) {
     # List the first level UI elements here
     navbarPage(
       title = div(
-        id = "logo-id", "tidyCDISC",
-        img(src = "www/app_ICON.png", style = "float:left; padding-right:3px; height:25px; width:30px")
+        id = "logo-id", 
+        "tidyCDISC"
       ),
       id = "navbarID",
       windowTitle = "tidyCDISC",
@@ -35,10 +35,6 @@ app_ui <- function(request) {
         title = "Individual Explorer",
         mod_indvExp_ui("indvExp_ui_1")
       )
-    ),
-    tags$script(
-      HTML("var header = $('.navbar > .container-fluid');
-                                header.append('<a href=\"https://github.com/Biogen-Inc/tidyCDISC/issues/new\"><img src=\"www/github.png\" style=\"width:2.5%;height:2.5%;float:right;padding-top:5px;\"></a>')")
     )
   )
 }

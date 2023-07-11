@@ -7,7 +7,7 @@
 #'
 #' @import shiny
 #' @import dplyr
-#' @importFrom rvg dm
+#' @importFrom rvg dml
 #' @importFrom officer read_pptx add_slide ph_with
 #' @importFrom IDEAFilter shiny_data_filter
 #' @importFrom haven zap_label zap_formats
