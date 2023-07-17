@@ -16,35 +16,55 @@ heatmap_ui <- function(id, label = "line") {
   ns <- NS(id)
   tagList(
     h4("Select axes:"),
+    
     wellPanel(
-      fluidRow(
-        column(
-          width = 6, 
-          selectInput(
-            inputId = ns("yvar_x"), 
-            label = "Select Parameter X", 
-            choices = NULL, 
-            multiple = TRUE
-          )
-        ),
-        column(
-          width = 6, 
-          selectInput(
-            inputId = ns("yvar_y"), 
-            label = "Select Parameter Y", 
-            choices = NULL, 
-            multiple = TRUE
-          )
+      conditionalPanel(
+        condition = '!input.extra',
+        selectInput(
+          inputId = ns('yvar'), 
+          label = 'Select Parameters', 
+          choices = NULL, 
+          multiple = TRUE
         )
       ),
-      # fluidRow(
-        # column(6, align = "center", uiOutput(ns("include_var_x"))),
-        # column(6, align = "center", uiOutput(ns("include_var_y")))
-      # )
-    ), 
+      shinyWidgets::materialSwitch(
+        inputId = "extra",
+        label = "Extra Heatmap", 
+        status = "primary",
+        value = FALSE,
+        right = TRUE
+      ),
+      conditionalPanel(
+        condition = 'input.extra',
+        fluidRow(
+          column(
+            width = 6, 
+            selectInput(
+              inputId = ns("yvar_x"), 
+              label = "Select Parameter X", 
+              choices = NULL, 
+              multiple = TRUE
+            )
+          ),
+          column(
+            width = 6, 
+            selectInput(
+              inputId = ns("yvar_y"), 
+              label = "Select Parameter Y", 
+              choices = NULL, 
+              multiple = TRUE
+            )
+          )
+        )
+      )
+    ),
     h4("Options:"),
     wellPanel(
-      selectInput(ns("time"), "Group by Visit Variable", choices = "NONE"),
+      selectInput(
+        inputId = ns("time"), 
+        label = "Group by Visit Variable", 
+        choices = "NONE"
+      ),
       selectInput(
         inputId = ns("cor_mthd"), 
         label = "Select correlation coefficient",
@@ -78,9 +98,9 @@ heatmap_ui <- function(id, label = "line") {
   )
 }
 
-#' Spaghetti Plot Server Function
+#' Heatmap Plot Server Function
 #'
-#' Using the widgets from the spaghetti plot UI
+#' Using the widgets from the Heatmap plot UI
 #' create a ggplot object which is returned to the 
 #' parent Population Explorer module
 #'
@@ -102,6 +122,11 @@ heatmap_srv <- function(input, output, session, data, run) {
   # -------------------------------------------------
   # Update Inputs
   # -------------------------------------------------
+  
+  observeEvent(input$yvar, { # sync with one input heatmap
+    updateSelectInput(session = session, inputId = 'yvar_x', selected = input$yvar)
+    updateSelectInput(session = session, inputId = 'yvar_y', selected = input$yvar)
+  })
   
   observe({
     req(run(), data())
@@ -141,6 +166,12 @@ heatmap_srv <- function(input, output, session, data, run) {
       # Convert to list so that one-element vectors are displayed correctly
       # in the dropdown
       as.list()
+    
+    updateSelectInput(
+      session, inputId = "yvar",
+      choices = list(`Time Dependent` = paramcd,`Time Independent` = num_col),
+      selected = isolate(input$yvar)
+    )
     
     updateSelectInput(
       session, inputId = "yvar_x",
@@ -205,7 +236,12 @@ heatmap_srv <- function(input, output, session, data, run) {
     } else {
       seltime <- "NONE"
     }
-    updateSelectInput(session, "time", choices = unique(c("NONE", seltime)), selected = isolate(input$time))
+    updateSelectInput(
+      session, 
+      inputId = "time", 
+      choices = unique(c("NONE", seltime)), 
+      selected = isolate(input$time)
+    )
   })
   # output$include_var <- renderUI({
   #   req(run(), input$yvar %in% data()$PARAMCD)
@@ -214,9 +250,6 @@ heatmap_srv <- function(input, output, session, data, run) {
   #                                   selected = isolate(input$value)
   #                                   )
   # })
-  
-  
-
   
   # -------------------------------------------------
   # Create plot using inputs

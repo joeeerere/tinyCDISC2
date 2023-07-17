@@ -239,7 +239,6 @@ app_heatmap <- function(data, yvar_x, yvar_y, time, value = "AVAL",
   }
   p
   
-
   my_d <- gathered #%>%
   #   ungroup() %>%
   #   rename_with(toupper) %>%
@@ -248,12 +247,5 @@ app_heatmap <- function(data, yvar_x, yvar_y, time, value = "AVAL",
   #   rename_with(~"Std. Deviation", "STD") %>%
   #   rename_with(~"Visit", time) 
  
-  
   return(list(plot = p, data = my_d))
 }
-
-
-
-
-
-
