@@ -27,13 +27,6 @@ heatmap_ui <- function(id, label = "line") {
           multiple = TRUE
         )
       ),
-      shinyWidgets::materialSwitch(
-        inputId = "extra",
-        label = "Extra Heatmap", 
-        status = "primary",
-        value = FALSE,
-        right = TRUE
-      ),
       conditionalPanel(
         condition = 'input.extra',
         fluidRow(
@@ -56,7 +49,15 @@ heatmap_ui <- function(id, label = "line") {
             )
           )
         )
+      ),
+      shinyWidgets::materialSwitch(
+        inputId = "extra",
+        label = "Extra Heatmap", 
+        status = "primary",
+        value = FALSE,
+        right = TRUE
       )
+      
     ),
     h4("Options:"),
     wellPanel(
@@ -68,7 +69,7 @@ heatmap_ui <- function(id, label = "line") {
       selectInput(
         inputId = ns("cor_mthd"), 
         label = "Select correlation coefficient",
-        choices = c("Pearson" = "pearson","Spearman" = "spearman"),
+        choices = c("Pearson" = "pearson", "Spearman" = "spearman"),
         selected = "Pearson"
       ),
       fixedRow(
@@ -190,6 +191,8 @@ heatmap_srv <- function(input, output, session, data, run) {
   observeEvent(list(input$yvar_x, input$yvar_y), {
     # req(run(), input$yvar != "")
     req(run(), data(), input$yvar_x, input$yvar_y)
+    
+    if(length(input$yvar_x) == 1 || length(input$yvar_y) == 1){return()} 
     
     # yvar cannot be from ADAE since that data has no visit var
     d <- data() %>% filter(data_from != "ADAE")
