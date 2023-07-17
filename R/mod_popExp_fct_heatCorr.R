@@ -26,8 +26,6 @@
 app_heatmap <- function(data, yvar_x, yvar_y, time, value = "AVAL",
                          cor_mthd = "pearson", show_sig = FALSE, sig_level = .05) {
   
-  
-  
   # if(!(yvar %in% colnames(data0))){
   
   pcd_exists <- any(!yvar_x %in% colnames(data)) | any(!yvar_y %in% colnames(data))
@@ -37,8 +35,7 @@ app_heatmap <- function(data, yvar_x, yvar_y, time, value = "AVAL",
   non_pcd_exists <- any(yvar_x %in% colnames(data)) | any(yvar_y %in% colnames(data))
   yvar_x_norm <- yvar_x[yvar_x %in% colnames(data)]
   yvar_y_norm <- yvar_y[yvar_y %in% colnames(data)]
-  
-  
+
   # create a smaller dataset with just the variables needed by function, and
   # reorder var w/ varn's
   # library(dplyr)
@@ -182,7 +179,6 @@ app_heatmap <- function(data, yvar_x, yvar_y, time, value = "AVAL",
     row.names(gathered) <- NULL
     # head(gathered, 10)
    
-    
     # Calculate p-value matrix
     p.mat <- wide_dat %>% dplyr::select_if(is.numeric) %>% ggcorrplot::cor_pmat()
     
@@ -204,8 +200,6 @@ app_heatmap <- function(data, yvar_x, yvar_y, time, value = "AVAL",
         param_y = factor(param_y, levels = rev(yvar_y))
       )
    
-    
-    
   }
   # make sure the factor levels of tile_data match those of data0
   if (time != "NONE") {

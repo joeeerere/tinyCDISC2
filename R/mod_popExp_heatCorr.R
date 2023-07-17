@@ -18,30 +18,60 @@ heatmap_ui <- function(id, label = "line") {
     h4("Select axes:"),
     wellPanel(
       fluidRow(
-        column(6, selectInput(ns("yvar_x"), "Select Parameter X", choices = NULL, multiple = TRUE)),
-        column(6, selectInput(ns("yvar_y"), "Select Parameter Y", choices = NULL, multiple = TRUE))
-        
+        column(
+          width = 6, 
+          selectInput(
+            inputId = ns("yvar_x"), 
+            label = "Select Parameter X", 
+            choices = NULL, 
+            multiple = TRUE
+          )
+        ),
+        column(
+          width = 6, 
+          selectInput(
+            inputId = ns("yvar_y"), 
+            label = "Select Parameter Y", 
+            choices = NULL, 
+            multiple = TRUE
+          )
+        )
       ),
       # fluidRow(
         # column(6, align = "center", uiOutput(ns("include_var_x"))),
         # column(6, align = "center", uiOutput(ns("include_var_y")))
-      # ),
-      
-    )
-    , h4("Options:"),
+      # )
+    ), 
+    h4("Options:"),
     wellPanel(
       selectInput(ns("time"), "Group by Visit Variable", choices = "NONE"),
-      selectInput(ns("cor_mthd"), "Select correlation coefficient",
-                  choices = c("Pearson" = "pearson","Spearman" = "spearman"),
-                  selected = "Pearson"
+      selectInput(
+        inputId = ns("cor_mthd"), 
+        label = "Select correlation coefficient",
+        choices = c("Pearson" = "pearson","Spearman" = "spearman"),
+        selected = "Pearson"
       ),
       fixedRow(
-        column(6, shinyWidgets::materialSwitch(ns("show_sig"), 
-           h6("Only label significant:"),status = "primary", value =  FALSE)),
-        conditionalPanel("input.show_sig", ns = ns,
-             column(6, numericInput(ns("sig_level"), "Set significance level:",
-                value = .05, min = 0, max = .1, step = .01))
-                         
+        column(
+          width = 6, 
+          shinyWidgets::materialSwitch(
+            inputId = ns("show_sig"), 
+            h6("Only label significant:"),
+            status = "primary", 
+            value =  FALSE
+          )
+        ),
+        conditionalPanel(
+          condition = "input.show_sig", 
+          ns = ns,
+          column(
+            width = 6,
+            numericInput(
+              inputId = ns("sig_level"), 
+              label = "Set significance level:",
+              value = .05, min = 0, max = .1, step = .01
+            )
+          )
         )
       )
     )
@@ -81,7 +111,6 @@ heatmap_srv <- function(input, output, session, data, run) {
     
     # get time based column names
     seltime_init <- sort(colnames(dplyr::select(d, ends_with("DY"), contains("VIS"))))
-
     
     # numeric columns, remove aval, chg, base
     # then remove the x-axis selectors
@@ -113,13 +142,16 @@ heatmap_srv <- function(input, output, session, data, run) {
       # in the dropdown
       as.list()
     
-    updateSelectInput(session, "yvar_x",
-                      choices = list(`Time Dependent` = paramcd,`Time Independent` = num_col),
-                      selected = isolate(input$yvar_x))
-    updateSelectInput(session, "yvar_y",
-                      choices = list(`Time Dependent` = paramcd,`Time Independent` = num_col),
-                      selected = isolate(input$yvar_y))
-    
+    updateSelectInput(
+      session, inputId = "yvar_x",
+      choices = list(`Time Dependent` = paramcd,`Time Independent` = num_col),
+      selected = isolate(input$yvar_x)
+    )
+    updateSelectInput(
+      session, inputId = "yvar_y",
+      choices = list(`Time Dependent` = paramcd,`Time Independent` = num_col),
+      selected = isolate(input$yvar_y)
+    )
 
   })
   
