@@ -19,12 +19,34 @@ boxPlot_ui <- function(id, label = "box") {
     wellPanel(
       selectInput(ns("yvar"), "Select y-axis", choices = NULL),
       fluidRow(column(12, align = "center", uiOutput(ns("include_var")))),
-      selectInput(ns("group"), "Group By", choices = NULL),
+      selectInput(inputId = ns("group"), label = "Group By", choices = NULL),
+      checkboxInput(ns("isfacet"), "Divide charts?", value = FALSE), # Not use ns
+      shinyjs::hidden(
+        div(
+          id = ns('facet-options'),
+          column(
+            width = 6,
+            selectInput(
+              inputId = ns('facet'), 
+              label = 'Facet By', 
+              choices = NULL
+            )
+          ),
+          column(
+            width = 6,
+            sliderInput(
+              inputId = ns('nrow'), 
+              label = 'Number of Rows', 
+              min = 1, max = 6,
+              value = 2, step = 1
+            )
+          )
+        )
+      ),
       checkboxInput(ns("points"), "Add Points?")
     )
   )
 }
-
 
 #' Box Plot Server Function
 #'
@@ -46,6 +68,18 @@ boxPlot_ui <- function(id, label = "box") {
 #' 
 boxPlot_srv <- function(input, output, session, data, run) {
   ns <- session$ns
+  
+  
+  observeEvent(input$isfacet, {
+    if(input$isfacet){
+      shinyjs::show(id = 'facet-options')
+    }
+    else{
+      shinyjs::hide(id = 'facet-options')
+      updateSelectInput(session = session, inputId = 'facet', choices = character(0))
+    }
+    
+  })
   
   # -------------------------------------------------
   # Update Inputs
@@ -79,15 +113,20 @@ boxPlot_srv <- function(input, output, session, data, run) {
     group <- sort(group[group != "data_from"])
     
     updateSelectInput(session, "group", choices = group, selected = isolate(input$group))
+    
+    # update facet with same value as group
+    updateSelectInput(session, "facet", choices = group, selected = isolate(input$group))
   })
   
   output$include_var <- renderUI({
     req(run(), input$yvar %in% data()$PARAMCD)
-    shinyWidgets::radioGroupButtons(ns("value"), "Value",
-                                    choices = c("AVAL", "CHG", "BASE"),
-                                    selected = isolate(input$value))
+    shinyWidgets::radioGroupButtons(
+      inputId = ns("value"), 
+      label = "Value",
+      choices = c("AVAL", "CHG", "BASE"),
+      selected = isolate(input$value)
+    )
   })
-  
   
   # -------------------------------------------------
   # Create boxplot using inputs
@@ -95,10 +134,19 @@ boxPlot_srv <- function(input, output, session, data, run) {
   
   # create plot object using the numeric column on the yaxis
   # or by filtering the data by PARAMCD, then using AVAL or CHG for the yaxis
+  
   p <- reactive({
     req(run(), data(), input$yvar, input$group)
-    app_boxplot(data(), input$yvar, input$group, input$value, input$points)
+    if(input$isfacet){ 
+      app_boxplot(data(), input$yvar, input$group, input$value, input$points, facet = input$facet, nrow = input$nrow)
+    }
+    else{
+      req(input$facet)
+      app_boxplot(data(), input$yvar, input$group, input$value, input$points)
+    }
   })
+  
+  
   
   # return the plot object to parent module
   return(p)

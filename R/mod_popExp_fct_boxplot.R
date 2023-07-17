@@ -17,7 +17,7 @@
 #' @return A ggplot object representing the boxplot
 #' 
 #' @noRd
-app_boxplot <- function(data, yvar, group, value = NULL, points = FALSE) {
+app_boxplot <- function(data, yvar, group, value = NULL, points = FALSE, facet = NULL, nrow = 2) {
   
   # BDS Parameter not selected
   if (yvar %in% colnames(data)) {
@@ -40,10 +40,20 @@ app_boxplot <- function(data, yvar, group, value = NULL, points = FALSE) {
     var_title <- paste(var_label, "by", best_lab(data, group))
     
     # Initialize plot
-    p <- d %>%
-      ggplot2::ggplot() +
-      ggplot2::aes_string(x = group, y = value) +
-      ggplot2::ylab(glue::glue("{var_label} ({best_lab(data, value)})"))
+    if(!is.null(facet)){
+      p <- d %>%
+        ggplot2::ggplot() +
+        ggplot2::aes_string(x = group, y = value) +
+        ggplot2::facet_wrap(facets = facet, nrow = nrow) + 
+        ggplot2::ylab(glue::glue("{var_label} ({best_lab(data, value)})"))
+    }
+    else{
+      p <- d %>%
+        ggplot2::ggplot() +
+        ggplot2::aes_string(x = group, y = value) +
+        ggplot2::ylab(glue::glue("{var_label} ({best_lab(data, value)})"))
+    }
+    
   }
   
   # Add layer of common plot elements
