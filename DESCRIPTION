@@ -1,8 +1,7 @@
-Package: tidyCDISC
+Package: openCDISC
 Title: Quick Table Generation & Exploratory Analyses on ADaM-Ish Datasets
-Version: 0.2.2
-Authors@R: person("Aaron", "Clark", , "clark.aaronchris@gmail.com", role = c("aut", "cre"),
-           comment = c(ORCID = "0000-0002-0123-0970"))
+Version: 0.0.1
+Authors@R: person("Jinhwan", "Kim", , "hwanistic@gmail.com", role = c("aut", "cre"))
 Description: Provides users a quick exploratory dive into common
     visualizations without writing a single line of code given the users
     data follows the Analysis Data Model (ADaM) standards put forth by the

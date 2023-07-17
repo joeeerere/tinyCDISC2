@@ -12,11 +12,10 @@ app_ui <- function(request) {
     # List the first level UI elements here
     navbarPage(
       title = div(
-        id = "logo-id", 
-        "tidyCDISC"
+        id = "logo-id", "openCDISC"
       ),
       id = "navbarID",
-      windowTitle = "tidyCDISC",
+      windowTitle = "openCDISC",
       tabPanel(
         title = "Data",
         mod_dataUpload_ui("dataUpload_ui_1")
@@ -63,7 +62,7 @@ golem_add_external_resources <- function() {
     favicon(),
     bundle_resources(
       path = app_sys("app/www"),
-      app_title = "tidyCDISC"
+      app_title = "openCDISC"
     ),
     tags$script(HTML(htmljs)),
     tags$script(src = "https://code.jquery.com/ui/1.12.1/jquery-ui.js"),
