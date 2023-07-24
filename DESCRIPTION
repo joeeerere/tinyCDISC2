@@ -1,6 +1,6 @@
 Package: openCDISC
 Title: Quick Table Generation & Exploratory Analyses on ADaM-Ish Datasets
-Version: 0.0.1
+Version: 0.0.2
 Authors@R: person("Jinhwan", "Kim", , "hwanistic@gmail.com", role = c("aut", "cre"))
 Description: Provides users a quick exploratory dive into common
     visualizations without writing a single line of code given the users

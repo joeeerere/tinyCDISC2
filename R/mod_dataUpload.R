@@ -16,50 +16,59 @@
 mod_dataUpload_ui <- function(id) {
   ns <- shiny::NS(id)
   tagList(
-    
     fluidPage(
       div(
-        div(style = "display: inline-block; ", actionButton(ns("pilot"), "Use CDISC Pilot Data")),
-        div(style = "display: inline-block; ", shinyWidgets::dropdownButton(
-          inputId = ns("ddown"),
-          tags$h4("Choose Pilot Data Sources"),
-          shinyWidgets::checkboxGroupButtons(
-            inputId = ns("pilot_selections"),
-            label = NULL, # inline = TRUE,
-            choices = c(
-              "ADSL" = "adsl",
-              "ADVS" = "advs",
-              "ADAE" = "adae",
-              "ADLBC" = "adlbc",
-              "ADTTE" = "adtte"
-            ), # direction = "vertical",
-            status = "info", checkIcon = list(
-              yes = icon("ok", lib = "glyphicon"),
-              no = icon("remove", lib = "glyphicon")
+        div(
+          style = "display: inline-block;", 
+          actionButton(ns("pilot"), "Use CDISC Pilot Data")
+        ),
+        div(
+          style = "display: inline-block;",
+          shinyWidgets::dropdownButton(
+            inputId = ns("ddown"),
+            tags$h4("Choose Pilot Data Sources"),
+            shinyWidgets::checkboxGroupButtons(
+              inputId = ns("pilot_selections"),
+              label = NULL, # inline = TRUE,
+              choices = c(
+                "ADSL" = "adsl",
+                "ADVS" = "advs",
+                "ADAE" = "adae",
+                "ADLBC" = "adlbc",
+                "ADTTE" = "adtte"
+              ), # direction = "vertical",
+              status = "info", 
+              checkIcon = list(
+                yes = icon("ok", lib = "glyphicon"),
+                no = icon("remove", lib = "glyphicon")
+              ),
+              selected = c("adsl", "advs", "adae", "adlbc", "adtte")
             ),
-            selected = c("adsl", "advs", "adae", "adlbc", "adtte")
-          ),
-          circle = FALSE,
-          status = "primary",
-          icon = icon("cog"),
-          width = "300px",
-          tooltip = shinyWidgets::tooltipOptions(title = "Click to change pilot data selections!")
-        ))
+            circle = FALSE,
+            status = "primary",
+            icon = icon("cog"),
+            width = "300px",
+            tooltip = shinyWidgets::tooltipOptions(
+              title = "Click to change pilot data selections!"
+            )
+          )
+        )
       ),
       div(uiOutput(ns("study_data_upload")), style = "padding-left: 20px", class = "studyid"),
       fluidRow(
         style = "padding: 20px",
-        column(
-          3,
+        column( # data upload
+          width = 3,
           wellPanel(
             div(style = "display: inline-block; ", h3("Data upload")),
             HTML("<br>ADSL file is mandatory & BDS/ OCCDS files are optional"),
+            hr(),
             fileInput(ns("file"), "Upload sas7bdat files", accept = c(".sas7bdat"), multiple = TRUE),
             uiOutput(ns("radio_test"))
           )
         ),
-        column(
-          6,
+        column( # data preview
+          width = 9,
           fluidRow(
             wellPanel(
               span(textOutput(ns("multi_studies")), style = "color:red;font-size:20px"),
@@ -70,10 +79,8 @@ mod_dataUpload_ui <- function(id) {
         )
       )
     )
-    
   )
 }
-
 
 #' dataUpload Server Function stores
 #' the uploaded data as a list and
