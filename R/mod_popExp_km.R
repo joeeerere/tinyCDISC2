@@ -25,9 +25,8 @@ km_ui <- function(id, label = "km") {
         column(6, selectInput(ns("group"), "Group By", choices = "NONE", selected = "NONE")),
         column(6, selectInput(ns("cnsr_var"), "Censor Variable (0,1)", choices = "CNSR", selected = "CNSR"))
       ),
-      shinyWidgets::radioGroupButtons(ns("timeval"),  "Display duration as", c("Day", "Month", "Year"), selected = "Day"
-      ),
-      numericInput(ns("timeby"), "Time by", value=30),
+      shinyWidgets::radioGroupButtons(ns("timeval"), "Display duration as", c("Day", "Month", "Year"), selected = "Day"),
+      numericInput(ns("timeby"), "Time by", value = 30),
       shinyWidgets::materialSwitch(ns("points"), h6("Mark censored observations?"),
         status = "primary", value = TRUE
       ),
@@ -35,12 +34,11 @@ km_ui <- function(id, label = "km") {
         status = "primary", value = FALSE
       ),
       shinyWidgets::materialSwitch(ns("table"), h6("Show table?"),
-                                   status = "primary", value = FALSE
+        status = "primary", value = FALSE
       ),
       shinyWidgets::materialSwitch(ns("pval"), h6("Show P-value?"),
-                                   status = "primary", value = FALSE
+        status = "primary", value = FALSE
       )
-      
     )
   )
 }
@@ -105,7 +103,7 @@ km_srv <- function(input, output, session, data, run) {
   # certain param
   observeEvent(input$yvar, {
     req(run(), input$yvar != "")
-    
+
     d0 <- data()
     my_cvars <- d0 %>%
       dplyr::filter(PARAMCD == input$yvar) %>%
@@ -127,26 +125,27 @@ km_srv <- function(input, output, session, data, run) {
   observeEvent(input$timeval, {
     req(run(), input$timeval != "")
 
-    if(input$timeval == "Day"){
-      
+    if (input$timeval == "Day") {
       updateNumericInput(session, "timeby",
-                        min = 1,
-                         value = 30)
-      }else if (input$timeval == "Month"){
+        min = 1,
+        value = 30
+      )
+    } else if (input$timeval == "Month") {
       updateNumericInput(session, "timeby",
-                         min = 1,
-                         value = 1)
-        }else if (input$timeval == "Year"){
-          updateNumericInput(session, "timeby",
-                             min = 1,
-                             value = 1)
-        }
-
+        min = 1,
+        value = 1
+      )
+    } else if (input$timeval == "Year") {
+      updateNumericInput(session, "timeby",
+        min = 1,
+        value = 1
+      )
+    }
   })
 
   observeEvent(input$yvar, {
     req(run(), input$yvar != "")
-    
+
     d <- data()
     my_vars <- d %>%
       dplyr::filter(PARAMCD == input$yvar) %>%
@@ -154,7 +153,7 @@ km_srv <- function(input, output, session, data, run) {
       select(one_of("AVISITN", "VISITNUM"), ends_with("DY")) %>%
       select_if(~ !all(is.na(.))) %>% # remove NA cols
       colnames()
-    
+
     updateSelectInput(
       session = session,
       inputId = "resp_var",
@@ -162,8 +161,8 @@ km_srv <- function(input, output, session, data, run) {
       selected = isolate(input$resp_var)
     )
   })
-  
-  
+
+
   # create plot object using the numeric column on the yaxis
   # or by filtering the data by PARAMCD, then using AVAL or CHG for the yaxis
   p <- reactive({
