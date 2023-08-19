@@ -9,10 +9,8 @@
 #' @param resp_var character, the response variable (paramcd)
 #' @param cnsr_var character, the censor variable. Usually CNSR
 #' @param group character, variable name of grouping variable (categorical or factor)
-#' @param points logical, whether to plot + symbols when patients censored
-#' @param ci logical, whether the curve(s) should be accompanied with a 95\% CI
-#' @param table logical, whether the table should be shown
-#' @param pval logical, whether the p-value should be shown
+#' @param option1 character, choose to show points or CI
+#' @param option2 character, choose to show table or p-value
 #' @param timeval character, Choice option to display duration(time) as Day , Month , Year
 #' @param timeby Numeric, Set interval of duration(time)
 
@@ -26,7 +24,7 @@
 #' @return A ggplot object containing the KM curve plot
 #'
 #' @noRd
-app_km_curve <- function(data, yvar, resp_var, cnsr_var, group = "NONE", points = TRUE, ci = FALSE, table = FALSE, pval = FALSE, timeval, timeby) {
+app_km_curve <- function(data, yvar, resp_var, cnsr_var, group = "NONE", option1, option2, timeval, timeby) {
   resp_var_sym <- rlang::sym(resp_var)
 
   # Filter data by param selected
@@ -66,6 +64,11 @@ app_km_curve <- function(data, yvar, resp_var, cnsr_var, group = "NONE", points 
     group != "NONE" ~ paste("\nby", best_lab(data, group)),
     TRUE ~ ""
   )
+
+  points <- "Points" %in% option1
+  ci <- "CI" %in% option1
+  table <- "Table" %in% option2
+  pval <- "P-value" %in% option2
 
   # generate plot
   p <-

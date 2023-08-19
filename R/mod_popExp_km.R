@@ -8,7 +8,8 @@
 #'
 #' @import shiny
 #' @import dplyr
-#'
+#' @importFrom shinyWidgets radioGroupButtons checkboxGroupButtons
+#' @importFrom shiny icon
 #' @family popExp Functions
 #' @noRd
 #'
@@ -25,20 +26,10 @@ km_ui <- function(id, label = "km") {
         column(6, selectInput(ns("group"), "Group By", choices = "NONE", selected = "NONE")),
         column(6, selectInput(ns("cnsr_var"), "Censor Variable (0,1)", choices = "CNSR", selected = "CNSR"))
       ),
-      shinyWidgets::radioGroupButtons(ns("timeval"), "Display duration as", c("Day", "Month", "Year"), selected = "Day"),
-      numericInput(ns("timeby"), "Time by", value = 30),
-      shinyWidgets::materialSwitch(ns("points"), h6("Mark censored observations?"),
-        status = "primary", value = TRUE
-      ),
-      shinyWidgets::materialSwitch(ns("ci"), h6("Include 95% confidence interval?"),
-        status = "primary", value = FALSE
-      ),
-      shinyWidgets::materialSwitch(ns("table"), h6("Show table?"),
-        status = "primary", value = FALSE
-      ),
-      shinyWidgets::materialSwitch(ns("pval"), h6("Show P-value?"),
-        status = "primary", value = FALSE
-      )
+      radioGroupButtons(ns("timeval"), "Display duration as", c("Day", "Month", "Year"), selected = "Day", justified = T),
+      numericInput(ns("timeby"), "Time by", min = 1, value = 30),
+      checkboxGroupButtons(ns("option1"), choices = c("Points", "CI"), checkIcon = list(yes = icon("ok", lib = "glyphicon")), justified = T),
+      checkboxGroupButtons(ns("option2"), choices = c("Table", "P-value"), checkIcon = list(yes = icon("ok", lib = "glyphicon")), justified = T),
     )
   )
 }
@@ -127,17 +118,10 @@ km_srv <- function(input, output, session, data, run) {
 
     if (input$timeval == "Day") {
       updateNumericInput(session, "timeby",
-        min = 1,
         value = 30
       )
-    } else if (input$timeval == "Month") {
+    } else {
       updateNumericInput(session, "timeby",
-        min = 1,
-        value = 1
-      )
-    } else if (input$timeval == "Year") {
-      updateNumericInput(session, "timeby",
-        min = 1,
         value = 1
       )
     }
@@ -162,6 +146,30 @@ km_srv <- function(input, output, session, data, run) {
     )
   })
 
+  observeEvent(input$yvar, {
+    req(run(), input$yvar != "")
+
+    # yvar paramcd
+    group_dat <- data() %>%
+      dplyr::filter(PARAMCD == input$yvar) %>%
+      select_if(~ !all(is.na(.))) # remove NA cols
+
+    # character and factor columns for grouping or faceting (separating)
+    char_col <- subset_colclasses(group_dat, is.character)
+    fac_col <- subset_colclasses(group_dat, is.factor)
+    group <- sort(c(fac_col, char_col))
+
+
+    # remove some variables...
+    grp <- group[!(group %in% c("data_from", "PARAM", "PARAMCD", "USUBJID"))]
+
+    # populate dropdowns with choices
+    updateSelectInput(session, "group",
+      choices = c("NONE", grp),
+      selected = isolate(input$group)
+    )
+  })
+
 
   # create plot object using the numeric column on the yaxis
   # or by filtering the data by PARAMCD, then using AVAL or CHG for the yaxis
@@ -174,10 +182,8 @@ km_srv <- function(input, output, session, data, run) {
       input$resp_var,
       input$cnsr_var,
       input$group,
-      input$points,
-      input$ci,
-      input$table,
-      input$pval,
+      input$option1,
+      input$option2,
       input$timeval,
       input$timeby
     )
